@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <input type="file" id="fileInput" accept=".gz" />
+        <button id="cancel">Cancel</button>
+        <div id="log" style="margin-top: 1em"></div>
+        <script>
+            const fileInput = document.getElementById("fileInput");
+            const cancelButton = document.getElementById("cancel");
+            const logDiv = document.getElementById("log");
+
+            const log = (message) => {
+                logDiv.innerHTML += `${new Date().toLocaleTimeString('en-US')} - ${message}<br>`;
+            }
+
+            const worker = new Worker("worker.js");
+            worker.addEventListener("message", event => {
+                log(event.data);
+            });
+
+
+            fileInput.addEventListener("click", () => {
+                // Allow selecting the same file twice
+                fileInput.value = "";
+            });
+            fileInput.addEventListener("change", async e => {
+                const file = e.target.files[0];
+                if (!file) {
+                    return;
+                }
+                log("[main] sending file");
+                worker.postMessage({ file });
+            });
+
+            cancelButton.addEventListener("click", () => {
+                log("[main] sending cancel message to worker");
+                worker.postMessage({ cancel: true });
+            });
+        </script>
+    </body>
+</html>
