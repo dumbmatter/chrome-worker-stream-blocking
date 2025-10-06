@@ -39,6 +39,9 @@ const processFile = async (file) => {
 
         // This does fix it:
         // await new Promise(resolve => setTimeout(resolve));
+
+        // So does this (but user-visible priority doesn't):
+        // await new Promise(resolve => scheduler.postTask(resolve, { priority: "user-visible" }));
     }
 
     const percent = Math.round((readSize / file.size) * 100);

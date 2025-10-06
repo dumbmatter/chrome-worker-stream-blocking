@@ -12,4 +12,4 @@ I'm not sure whether Chrome or Firefox is behaving correctly, but I suspect Fire
 
 If you add `await Promise.resolve();` inside the loop consuming the stream, that still doesn't fix it.
 
-But if you add `await new Promise(resolve => setTimeout(resolve));` then Chrome behaves like Firefox.
+But if you add `await new Promise(resolve => setTimeout(resolve));` or `await new Promise(resolve => scheduler.postTask(resolve, { priority: "user-visible" }));` then Chrome behaves like Firefox.
