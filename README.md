@@ -2,7 +2,7 @@
 
 To reproduce the issue:
 
-1. Go to https://dumbmatter.github.io/chrome-worker-stream-message/
+1. Go to https://dumbmatter.github.io/chrome-worker-stream-blocking/
 2. Select a large (>500MB) gzip file
    (Running `head -c 500M /dev/random | base64 | gzip -c > test.gz` will create one)
 3. Once it starts decompressing, click "Cancel"
