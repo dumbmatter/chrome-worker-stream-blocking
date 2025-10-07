@@ -13,8 +13,8 @@ Firefox 143: the "cancel" message is almost instantly received by the worker and
 
 Chrome 141: the "cancel" message is not received by the worker until the stream has already finished processing, no matter how long that takes.
 
-Safari 26: there is a delay of a couple seconds before the "cancel" message is received by the worker, but at that point it does stop the stream.
+Safari 26: usually behaves the same as Chrome, but sometimes behaves like Firefox (but a bit less responsive).
 
-I'm not sure which of these behaviors is most correct, but I'd guess Firefox. Regardless, it's weird Firefox and Chrome are so different.
+I'm not sure which of these behaviors is most correct. Regardless, it's weird Firefox and Chrome/Safari are so different.
 
 If you add `await Promise.resolve();` inside the loop consuming the stream, that still doesn't fix Chrome's behavior. But if you add `await new Promise(resolve => setTimeout(resolve));` or `await new Promise(resolve => scheduler.postTask(resolve, { priority: "user-visible" }));` then Chrome behaves like Firefox.
