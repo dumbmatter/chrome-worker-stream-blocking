@@ -20,16 +20,22 @@ const processFile = async (file) => {
     log("starting decompression");
     let readSize = 0;
     const reader = await file.stream().pipeThrough(
-		new TransformStream({
-			transform(chunk, controller) {
-				readSize += chunk.length;
-				controller.enqueue(chunk);
-			}
-		})
-	).pipeThrough(new DecompressionStream("gzip")).getReader();
+            new TransformStream({
+                transform(chunk, controller) {
+                    readSize += chunk.length;
+                    controller.enqueue(chunk);
+                }
+            })
+        )
+        .pipeThrough(new DecompressionStream("gzip"))
+        .pipeThrough(new CompressionStream("gzip"))
+        .pipeThrough(new DecompressionStream("gzip"))
+        .pipeThrough(new CompressionStream("gzip")).getReader();
 
+    let readSize2 = 0;
     while (true) {
         const { value, done } = await reader.read();
+        readSize2 += value.length;
         if (done) {
             break;
         }
@@ -50,5 +56,6 @@ const processFile = async (file) => {
     }
 
     const percent = Math.round((readSize / file.size) * 100);
-    log(`finished (${percent}% done)`);
+    const percent2 = Math.round((readSize2 / file.size) * 100);
+    log(`finished (${percent}% done, ${percent2}% done)`);
 }
