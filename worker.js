@@ -35,10 +35,11 @@ const processFile = async (file) => {
     let readSize2 = 0;
     while (true) {
         const { value, done } = await reader.read();
-        readSize2 += value.length;
         if (done) {
             break;
         }
+
+        readSize2 += value.length;
 
         if (cancelRequested) {
             log("cancelling stream");
