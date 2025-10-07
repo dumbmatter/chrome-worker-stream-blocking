@@ -19,16 +19,21 @@ onmessage = async e => {
 const processFile = async (file) => {
     log("starting decompression");
     let readSize = 0;
-    const decompressedStream = file.stream().pipeThrough(
+    const reader = await file.stream().pipeThrough(
 		new TransformStream({
 			transform(chunk, controller) {
 				readSize += chunk.length;
 				controller.enqueue(chunk);
 			}
 		})
-	).pipeThrough(new DecompressionStream("gzip"));
+	).pipeThrough(new DecompressionStream("gzip")).getReader();
 
-    for await (const value of decompressedStream) {
+    while (true) {
+        const { value, done } = await reader.read();
+        if (done) {
+            break;
+        }
+
         if (cancelRequested) {
             log("cancelling stream");
             break;
